@@ -8,7 +8,7 @@ def main():
     # Here we use PRAW to fetch a Reddit instance
     redditHandle = Reddit(user_agent="User Summon Bot")
     # Logging into reddit with a username and password
-    redditHandle.login('usersummonbot', 'summonbot123')
+    redditHandle.login('user-summoner', 'amarbot123')
     
         # Loading list of comments previously replied to
     
@@ -22,7 +22,7 @@ def main():
         visited.append(line.strip())
     
     # Getting posts from a sub
-    allComments = redditHandle.get_subreddit('all').get_comments(limit=None)
+    allComments = redditHandle.get_subreddit('pcmasterrace+technology+teenagers+gaming+adviceanimals+programming+programmerhumor').get_comments(limit=None)
     
     # Flatten comments to make parsing easier
     for comment in allComments:
