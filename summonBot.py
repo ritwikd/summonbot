@@ -9,55 +9,52 @@ redditHandle = Reddit(user_agent="User Summon Bot")
 # Logging into reddit with a username and password
 redditHandle.login('usersummonbot', 'summonbot123')
 
-# Loading list of comments previously replied to
-replied = []
-repliedHndl = open("replList.txt", "r+")
+    # Loading list of comments previously replied to
+
+visited = []
+repliedHndl = open("workspace/summonBot/replList.txt", "r+")
 for line in repliedHndl.readlines():
-    replied.append(line.strip())
-
-print replied
-
+    visited.append(line.strip())
 
 # Getting posts from a sub
-commentSubs = redditHandle.get_subreddit('summonbottest').get_hot(limit=100)
-# Iterate through each post
-for post in commentSubs:
-    # List of users to be summoned
-    users = []
-     
-    # Flatten comments to make parsing easier
-    for comment in helpers.flatten_tree(post.comments):
-        # Check if comment has already been replied to 
-        if (comment.id not in replied):
-            # Check if user is summoned
-            if "/u/" in comment.body:
-                    # Process comment to generate user names
-                    splitCom = split(comment.body.replace("'", "").replace('"', ""))
-                    print splitCom
-                    for item in splitCom:
-                        if "/u/" in item:
-                            if item[3:] not in users:
-                                users.append(item[3:])
-     
-                    print users
-                    # Iterate through mentioned users
-                    for user in users:
-                        # Try/except used to prevent exceptions shutting down bot
-                        try: 
-                            # Alphanumerify the parsed names (remove punctuation, etc.)
-                            user = user.translate(string.maketrans("", ""), '"#$%&\'()*+,./:;<=>?@[\\]^`{|}~')
-                            print user
-                            # Message user
-                            redditHandle.send_message(user, "You have been summoned by " + comment.author.name + ".", comment.author.name + " summoned you in the comment:\n \n" + comment.body + "\n \n Link: " + comment.permalink + "?context=3\n")
-                            # Reply to comment with message
-                            comment.reply(user + " has been summoned.")
-                            # Add comment to list of replied
-                            replied.append(comment.id)
-                            print user + " has been summoned."
-                        except:
-                            pass
+allComments = redditHandle.get_subreddit('all').get_comments(limit=None)
 
+# Flatten comments to make parsing easier
+for comment in allComments:
+    users = []
+    # Check if comment has already been visited 
+    if (comment.id not in visited):
+        print comment.body
+        # Add comment to list of replied
+        visited.append(comment.id)
+        # Check if user is summoned
+        if "/u/" in comment.body:
+                #Split comment into 'words' to parse for user names
+                splitCom = split(comment.body.replace("'", "").replace('"', ""))
+                #Loop through words
+                for word in splitCom:
+                    #Check if word has a leading user prefix
+                    if "/u/" in word:
+                        #Check if user has already been included in this post (i.e., Betelgeuse style summoning)
+                        if word[3:] not in users:
+                            #Add user to list
+                            users.append(word[3:])
+  
+                # Iterate through mentioned users
+                for user in users:
+                    # Try/except used to prevent exceptions shutting down bot
+                    try: 
+                        # Alphanumerify the parsed names (remove punctuation, etc.)
+                        user = user.translate(string.maketrans("", ""), '"#$%&\'()*+,./:;<=>?@[\\]^`{|}~')
+                        # Message user
+                        redditHandle.send_message(user, "You have been summoned by " + comment.author.name + ".", comment.author.name + " summoned you in the comment:\n \n" + comment.body + "\n \n Link: " + comment.permalink + "?context=3\n")
+                        # Reply to comment with message
+                        comment.reply(user + " has been summoned.")
+                    except:
+                        pass
 # Write list of replied comments to file  
 repliedHndl.seek(0)                      
-repliedHndl.write('\n'.join(replied))
-repliedHndl.close()    
+repliedHndl.write('\n'.join(visited))
+repliedHndl.close()  
+
+  
