@@ -4,16 +4,16 @@ from re import sub as alph
 
 
 # Here we use PRAW to fetch a Reddit instance
-redditHandle = Reddit(user_agent="")
+redditHandle = Reddit(user_agent="User Summon Bot")
 # Logging into reddit with a username and password
-redditHandle.login('username', 'password')
+redditHandle.login('usersummonbot', 'summonbot123')
 
 # Getting posts from a sub
-commentSubs = redditHandle.get_subreddit('subreddit').get_hot(limit=100)
+commentSubs = redditHandle.get_subreddit('summonbottest').get_hot(limit=100)
 
 # Loading list of comments previously replied to
 replied = []
-repliedHndl = open("comments.txt", "r+")
+repliedHndl = open("replList.txt", "r+")
 for line in repliedHndl.readlines():
     replied.append(line.strip())
 repliedHndl.close()
@@ -55,7 +55,16 @@ for post in commentSubs:
 # Write list of replied comments to file                        
 repliedHndl = open("replList.txt", "r+")
 repliedHndl.write('\n'.join(replied))
-repliedHndl.close()	
+repliedHndl.close()    
+
+
+
+
+
+
+
+
+
 
 
 
