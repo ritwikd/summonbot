@@ -29,13 +29,13 @@ def main():
         users = []
         # Check if comment has already been visited 
         if (comment.id not in visited):
-            print comment.body
+            print comment.body + "\n" + (len(comment.body) * "-")
             # Add comment to list of replied
             visited.append(comment.id)
             # Check if user is summoned
             if "/u/" in comment.body:
                     #Split comment into 'words' to parse for user names
-                    splitCom = split(comment.body.replace("'", "").replace('"', ""))
+		    splitCom = split(comment.body.replace("'", "").replace('"', ""))
                     #Loop through words
                     for word in splitCom:
                         #Check if word has a leading user prefix
